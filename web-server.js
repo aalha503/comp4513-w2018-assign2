@@ -3,7 +3,7 @@ var express = require("express");
 var parser = require("body-parser");
 
 //connecting to mongo. Source: https://devcenter.heroku.com/articles/nodejs-mongoose
-var upstring = 
+var ustring = 
 process.env.MONGODB_URI ||
 process.env.MONGOLAB_URI ||
 process.env.MONGOHQ_URL ||
