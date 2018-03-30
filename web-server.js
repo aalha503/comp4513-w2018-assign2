@@ -1,10 +1,12 @@
-var mongoose = require('mongoose');
+var mongoose = require("mongoose");
 var express = require("express");
 var parser = require("body-parser");
 
 //connecting to mongo. Source: https://devcenter.heroku.com/articles/nodejs-mongoose
 var upstring = 
 process.env.MONGODB_URI ||
+process.env.MONGOLAB_URI ||
+process.env.MONGOHQ_URL ||
 'mongodb://localhost/HelloMongoose';
 
 //server will listen to appropriate port or default to port 5000
