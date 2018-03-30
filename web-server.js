@@ -3,11 +3,12 @@ var express = require("express");
 var parser = require("body-parser");
 
 //connecting to mongo. Source: https://devcenter.heroku.com/articles/nodejs-mongoose
-var ustring = 
-process.env.MONGODB_URI ||
+var ustring = 'mongodb://localhost/HelloMongoose';
+
+/*process.env.MONGODB_URI ||
 process.env.MONGOLAB_URI ||
 process.env.MONGOHQ_URL ||
-'mongodb://localhost/HelloMongoose';
+*/
 
 //server will listen to appropriate port or default to port 5000
 var theport = process.env.PORT || 5000;
