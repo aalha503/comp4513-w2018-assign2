@@ -3,8 +3,7 @@ var express = require("express");
 var parser = require("body-parser");
 
 //connecting to mongo. Source: https://devcenter.heroku.com/articles/nodejs-mongoose
-
-/*var uristring = 
+var uristring = 
 process.env.MONGODB_URI ||
 process.env.MONGOLAB_URI ||
 process.env.MONGOHQ_URL ||
@@ -23,8 +22,8 @@ var theport = process.env.PORT || 5000;
       }
     });
 
-*/
-//FROM NODE LAB 2
+/*
+						FROM NODE LAB 2
 mongoose.connect('mongodb://Abdul:Comp4513@ds125469.mlab.com:25469/heroku_ghq7zd4j');
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error: ')); 
@@ -51,9 +50,10 @@ var Stock = mongoose.model('Stock', stockSchema);
 var app = express();
 app.use(parser.json);
 app.use(parser.urlencoded({extended:true}));
-app.set('port', (process.env.PORT || 5000))
+
 //returns a single stock
-app.get('api/companies/:symbol',function(req, res){
+app.route('api/companies/:symbol')
+.get(function(req, res){
     Stock.find({symbol: req.params.symbol}, function(error, data){
         if (error){
             res.json({message: 'Stock not found'})
