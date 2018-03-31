@@ -5,9 +5,9 @@
   "engines": {
     "node": "8.9.1"
   },
-  "main": "index.js",
+  "main": "web-service.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node web-service.js",
     "test": "node test.js"
   },
   "dependencies": {
