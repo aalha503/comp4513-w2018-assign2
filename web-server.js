@@ -53,8 +53,7 @@ app.use(parser.json);
 app.use(parser.urlencoded({extended:true}));
 
 //returns a single stock
-app.route('api/companies/:symbol')
-.get(function(req, res){
+app.get('api/companies/:symbol',function(req, res){
     Stock.find({symbol: req.params.symbol}, function(error, data){
         if (error){
             res.json({message: 'Stock not found'})
