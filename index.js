@@ -5,5 +5,5 @@ http.createServer(function (req, res) {
     res.end('Hello World\n');
     
 }).listen(process.env.PORT || 8080, function () {
-    console.log("Running on", process.env.PORT + ":" + process.env.IP);
+    console.log("Node server is running....");
 });
