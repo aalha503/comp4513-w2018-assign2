@@ -23,7 +23,7 @@ db.once('open', function callback (){
 //  response.send(cool());
 //}
 
-app.set('port', (2000));
+app.set('port', (process.env.PORT ||| 5000));
 //app.use(express.static(__dirname + '/public'));
 
 
