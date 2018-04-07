@@ -4,7 +4,8 @@ var express = require('express'),
   mongoose = require('mongoose'),
   //serverStockSchema = require('./api/models/todoListModel'), //created model loading here
   bodyParser = require('body-parser');
- 
+ var moment = require('moment');
+
   
 // mongoose instance connection url connection
 //mongoose.Promise = global.Promise;
@@ -78,12 +79,12 @@ var Price = mongoose.model('Price', pricesSchema);
     .get(function(req, resp){
      var name = req.params.name.toUpperCase();
      var month = req.params.month
-     let startDate = new Date(2017,month,1).toISOString();//.substring(0,10);
-     let endDate = new Date(2017,month+1,0).toISOString();//.substring(0,10);
+     let startDate = new Date(2017,month-1,1).toISOString();//.substring(0,10);
+     let endDate = new Date(2017,month,0).toISOString();//.substring(0,10);
      //let fDayStr = firstDay.substring(0,10);
    //  let lDayStr = lastDay.substring(0,10);
 
-    Price.find({name: name, date: {$gte: startDate, $lt: endDate}},function(err, data){
+    Price.find({name: name, date: {$gte: startDate, $lte: endDate}},function(err, data){
         if(err){
             resp.json({message: 'Unable to connect to find price'});
         }
@@ -109,9 +110,17 @@ var Price = mongoose.model('Price', pricesSchema);
         }
        	 else{
        	 console.log(name);
-       	 allMonths = data;
+       	 allMonths = function(data){
+       	 
+       	 var a = moment('2017-01-01');
+		 var b = moment('2017-12-31');
+		 for (var m = moment(a); m.diff(b, 'days') <= 0; m.add(1, 'days')) {
+ 		 console.log(m.format('YYYY-MM-DD'));
+		}
+		 };
        	 //all
        	 resp.json(data)
+    	 console.log(allMonths);
        	 }
         })
 	});
