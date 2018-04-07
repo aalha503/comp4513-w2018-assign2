@@ -1,3 +1,5 @@
+
+/*
 'use strict';
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
@@ -5,6 +7,7 @@ var Schema = mongoose.Schema;
 
 var stockSchema = new mongoose.Schema(
     {
+    _id: Number,
     symbol: String,
     name: String,
     sector: String,
@@ -17,3 +20,4 @@ var stockSchema = new mongoose.Schema(
 );
 
 module.exports = mongoose.model('Stock', stockSchema);
+*/
