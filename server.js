@@ -11,6 +11,11 @@ var express = require('express'),
 //mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://Abdul:Comp4513@ds125469.mlab.com:25469/heroku_ghq7zd4j');
 
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
 //module.exports = function(app) {
   
@@ -74,7 +79,7 @@ var Price = mongoose.model('Price', pricesSchema);
         })
 	});
 	
-	//returns the price info for each day in the specified month
+	//returns the price info for each day in a specified month
 	  app.route('/api/price/:name/:month')
     .get(function(req, resp){
      var name = req.params.name.toUpperCase();
@@ -90,40 +95,50 @@ var Price = mongoose.model('Price', pricesSchema);
         }
        	 else{
        	     //return JSON retrieved by Mongo as response
-       	     console.log(month);
-       	     console.log(startDate);
+       	     //console.log(month);
+       	     //console.log(startDate);
        	     //console.log(lastDay);
-       	     console.log(endDate);
+       	     //console.log(endDate);
        	 resp.json(data)
        	 }
         })
 	});
 
-//returns company based on symbol
-  app.route('/api/price/:name')
+//returns the average close value for each month in the year
+  app.route('/api/avg/price/:name')
     .get(function(req, resp){
-     var name = req.params.name.toUpperCase();
-	var allMonths;
-   	 Price.find({name: name}, function(err, data){
+     var theName = req.params.name.toUpperCase();
+   	 Price.aggregate([
+   	 				  {$match : {name: theName}},
+   	 				  {$group: { 
+   	 				  	_id : {
+   	 				  		$substr: [ "$date", 5, 2]}, 
+   	 				  	    Avg : {$avg :"$close"}}},
+   	 				  { $sort : { "_id": 1, "Avg" : 1 }}],function(err, data){
         if(err){
-            resp.json({message: 'Unable to connect to stocks'});
+            resp.json({message: 'Unable to connect to find average price for each month'});
         }
        	 else{
-       	 console.log(name);
-       	 allMonths = function(data){
-       	 
-       	 var a = moment('2017-01-01');
-		 var b = moment('2017-12-31');
-		 for (var m = moment(a); m.diff(b, 'days') <= 0; m.add(1, 'days')) {
- 		 console.log(m.format('YYYY-MM-DD'));
-		}
-		 };
-       	 //all
        	 resp.json(data)
-    	 console.log(allMonths);
        	 }
-        })
-	});
+    	})
+    });
+
+//returns the price information for a specific date
+    app.route('/api/price/info/:name/:date')
+    .get(function(req, resp){
+     var theName = req.params.name.toUpperCase();
+     var theDate = new Date(req.params.date).toISOString();
+   	 Price.aggregate([
+   	 				  {$match : {name: theName, date: theDate}}],function(err, data){
+        if(err){
+            resp.json({message: 'Unable to connect to find average price for each month'});
+        }
+       	 else{
+       	 resp.json(data)
+       	 }
+    	})
+    });
 	
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
