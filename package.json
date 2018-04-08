@@ -14,6 +14,7 @@
   "dependencies": {
     "crypto-md5": "^1.0.0",
     "express": "^4.16.3",
+    "md5": "^2.2.1",
     "moment": "^2.22.0",
     "mongoose": "^5.0.12"
   }

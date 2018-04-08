@@ -3,8 +3,10 @@ var express = require('express'),
   port = process.env.PORT || 5000,
   mongoose = require('mongoose'),
   //serverStockSchema = require('./api/models/todoListModel'), //created model loading here
-  bodyParser = require('body-parser');
- var moment = require('moment');
+  bodyParser = require('body-parser'),
+  md5 = require('md5');
+  crypto = require("crypto");
+ //var moment = require('moment');
 
   
 // mongoose instance connection url connection
@@ -55,7 +57,8 @@ var Price = mongoose.model('Price', pricesSchema);
 
 var usersSchema = new mongoose.Schema(
 {
-	id:String,
+	_id: Number,
+	id:Number,
 	first_name: String,
 	last_name: String,
 	email: String,
@@ -203,30 +206,78 @@ app.route('/api/portfolio/:id')
     }
     else{
     console.log(id);
-    res.json(data);
+    resp.json(data);
     }
   });
 });
 	
-
+	
 //checks for logins
-app.route('api/user/:email/:password')
+app.route('/api/users/:email/:password')
 	.get(function(req, resp){
-	var email = req.params.email;
-	var password = req.params.password;
-	var theUser;
-	User.find({email: email},function(err,data){
-		console.log(email);
+	var theEmail = req.params.email;
+	var thePassword = req.params.password;
+    User.find({email: theEmail},{salt: 1, password: 1, id: 1, name:1}, function(err,data){
 		if(err){
 		resp.json({ message: 'User does not exist' });
 		console.log('User does not exist');
 		}
 		else{
-		theUser = data;
-		console.log(email)
+		//console.log("data is \n" + data + "\n \n");
+		//console.log("data[0].salt>>>:" + data[0].salt + "\n");
+		var theAttempt = thePassword + data[0].salt;
+	    var saltedPeppered = md5(theAttempt,'hex');
+	    //var hash = crypto.createHash('md5').update(theAttempt).digest('hex');
+		resp.json(data);
+		//let saltedPeppered = thePassword + salt;
+		//console.log(saltedPeppered);
+		//console.log(data[0].password);
+		//console.log(hash);
 		}
-		})})
+		})
+	});
+	
+	  
+/*
+app.route('/api/users/:email/:password')
+    .get(function (req, resp) {
+        
+              
+                  User.find( {email: req.params.email}, { salt: 1, password: 1},
+                    function(err, data){
+                                  {
+                     if(err){
+                          resp.json({ message: 'Unable to connect to users' });
+                     }
+                     else {
 
+                    var saltedHash = crypto.createHash('md5').update(req.params.password + data[0].salt).digest('hex');
+                    
+                    console.log("Compared pass: " + data[0].password);
+                    console.log("Salted hash: " + saltedHash);
+                    queryChecker(saltedHash);
+  
+                     }
+                    }
+                    
+                    
+        });
+             
+               function queryChecker(saltedHash){
+                   User.find( {password: saltedHash}, { id: 1, first_name: 1, last_name: 1}, 
+                        function(err, data)
+                        {
+                           if(err){
+                                 resp.json({ message: 'Wrong password' });
+                            }
+                            else {
+                                resp.json(data);
+                                console.log("data: " + data);
+                            }
+                            });
+               }
+    });
+*/
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
