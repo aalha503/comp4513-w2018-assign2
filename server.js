@@ -53,6 +53,31 @@ var pricesSchema = new mongoose.Schema(
 var Price = mongoose.model('Price', pricesSchema);
 
 
+var usersSchema = new mongoose.Schema(
+{
+	id:String,
+	first_name: String,
+	last_name: String,
+	email: String,
+	salt: String,
+	password: String
+	}  
+);
+var User = mongoose.model('User', usersSchema);
+
+
+var portfoliosSchema = new mongoose.Schema(
+{
+	id: Number,
+    symbol: String,
+    user: Number,
+    owned: Number
+	}
+);
+var Portfolio = mongoose.model('Portfolio', portfoliosSchema);
+
+
+
 // Routes are defined here
 	//returns all companies
   app.route('/api/companies')
@@ -164,12 +189,44 @@ app.route('/api/final/price/:name')
         	//console.log("here yo");
             resp.json(data);
         }
-    });
-    
-    
-    
+    }); 
   });
+  
+  
+//returns portfolio info for a specific user
+app.route('/api/portfolio/:id')
+    .get(function(req, resp) {
+    var id = req.params.id
+  	Portfolio.find({user : id}, function(err, data) {
+    if (err){
+    resp.json({ message: 'Unable to find portfolio for user' });
+    }
+    else{
+    console.log(id);
+    res.json(data);
+    }
+  });
+});
 	
+
+//checks for logins
+app.route('api/user/:email/:password')
+	.get(function(req, resp){
+	var email = req.params.email;
+	var password = req.params.password;
+	var theUser;
+	User.find({email: email},function(err,data){
+		console.log(email);
+		if(err){
+		resp.json({ message: 'User does not exist' });
+		console.log('User does not exist');
+		}
+		else{
+		theUser = data;
+		console.log(email)
+		}
+		})})
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
