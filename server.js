@@ -57,12 +57,12 @@ var Price = mongoose.model('Price', pricesSchema);
 	//returns all companies
   app.route('/api/companies')
     .get(function(req, res) {
-  	Company.find({}, function(err, data) {
+  	Company.find({}).sort({name:1}).exec(function(err, data) {
     if (err)
       res.send(err);
     res.json(data);
   });
-});
+  });
 
 	//returns company based on symbol
   app.route('/api/company/:symbol')
@@ -125,12 +125,21 @@ var Price = mongoose.model('Price', pricesSchema);
     });
 
 //returns the price information for a specific date
-    app.route('/api/price/info/:name/:date')
+    app.route('/api/price/info/:name/:cDate')
     .get(function(req, resp){
      var theName = req.params.name.toUpperCase();
-     var theDate = new Date(req.params.date).toISOString();
+     var theDate = req.params.cDate;
+     var year = theDate.substring(0,4);
+     var month = theDate.substring(4,6);
+     var day = theDate.substring(6,8)
+     var fullDate = year + "-" + month + "-" + day; 
+     console.log(theDate);
+     console.log("year " + year);
+     console.log("month " + month);
+     console.log("day: " + day);
+     console.log("full date " + fullDate);
    	 Price.aggregate([
-   	 				  {$match : {name: theName, date: theDate}}],function(err, data){
+   	 				  {$match : {name: theName, date: fullDate}}],function(err, data){
         if(err){
             resp.json({message: 'Unable to connect to find average price for each month'});
         }
@@ -139,6 +148,27 @@ var Price = mongoose.model('Price', pricesSchema);
        	 }
     	})
     });
+	
+//returns the latest price information for the newest date
+app.route('/api/final/price/:name')
+    .get(function (req,resp) {
+    	var name = req.params.name.toUpperCase();
+        Price.find({name: name}).
+            select('date open high low close volume').sort({"date": -1}).limit(1).exec(
+         function(err,data){
+        if(err){
+            resp.json({ message: 'Unable to connect to users' });
+        }
+        else
+        {
+        	//console.log("here yo");
+            resp.json(data);
+        }
+    });
+    
+    
+    
+  });
 	
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
