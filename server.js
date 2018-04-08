@@ -4,7 +4,8 @@ var express = require('express'),
   mongoose = require('mongoose'),
   //serverStockSchema = require('./api/models/todoListModel'), //created model loading here
   bodyParser = require('body-parser'),
-  md5 = require('md5');
+  cors = require('cors'),
+  md5 = require('md5'),
   crypto = require("crypto");
  //var moment = require('moment');
 
@@ -18,6 +19,8 @@ app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
+
+app.use(cors())
 
 //module.exports = function(app) {
   
@@ -228,6 +231,7 @@ app.route('/api/users/:email/:password')
 		var theAttempt = thePassword + data[0].salt;
 	    var saltedPeppered = md5(theAttempt,'hex');
 	    //var hash = crypto.createHash('md5').update(theAttempt).digest('hex');
+	    if(saltedPepper === data[0].password)
 		resp.json(data);
 		//let saltedPeppered = thePassword + salt;
 		//console.log(saltedPeppered);
