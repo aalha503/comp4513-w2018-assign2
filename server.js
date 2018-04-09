@@ -262,7 +262,7 @@ app.route('/api/users/:email/:password')
     User.find({email: theEmail},{salt: 1, password: 1, id: 1, first_name:1, last_name:1}, function(err,data){
 		if(err){
 		resp.status(204);
-		resp.json({ message: 'User does not exist' });
+		resp.send({ message: 'User does not exist' });
 		}
 		else{
 		//console.log("data is \n" + data + "\n \n");
@@ -277,18 +277,12 @@ app.route('/api/users/:email/:password')
     		resp.json(infoToReturn);
   			resp.status(200);
 	    	}
-	    	
-	    else {
-	    	//console.log(saltedPeppered + "\n" + data[0].password );
+	    	else {
 	    	resp.status(204);
             resp.send({ message: 'incorrect username or password' });
+        	}
 		}
-		//let saltedPeppered = thePassword + salt;
-		//console.log(saltedPeppered);
-		//console.log(data[0].password);
-		//console.log(hash);
-		}
-		})
+		});
 	});
 	
 //returns company based on symbol
