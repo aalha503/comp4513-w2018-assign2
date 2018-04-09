@@ -232,27 +232,72 @@ app.route('/api/portfolio/:id')
 
 /*
 //G plus
-app.route('/api/portfolio/:id')
+	
+app.route('/api/portfolioTest/:ss')
     .get(function(req, resp) {
-    var id = req.params.id
-db.prices.aggregate([
+    var ss = req.params.id
+var hope = Portfolio.aggregate([
+  {$match: {"symbol": ss}},
   { $lookup:
      {
-       from: "db.portfolios",
-       localField: "name",
-       foreignField: "symbol",
-       as: "theJoinedPrice"}
-    
+       from: "db.prices",
+       localField: "symbol",
+       foreignField: "name",
+       as: "theJoint"}
   },
-  { $match: {"name": "AMZN"}
-     },
-  { $sort: {"date": -1}},
-  {$limit: 1}
-
-])
-
-*/	
+  { $project: 
+             {"theJoint": 1 }
+            	}], function(err, data){
+            	if (err){
+    resp.json({ message: 'Unable to find portfolio for user' });
+    }
+    else {
+    //console.log(hope);
+    console.log(data.length);
+    resp.json(data);
+    } 
+	})
+	});
 	
+*/  
+
+
+//H
+app.get('/api/portfolio/percentage/:userId', function (req,resp)
+  {
+      var userId = parseInt(req.params.userId);
+      
+    // use mongoose to retrieve all books from Mongo
+  Portfolio.aggregate([{ $match: {user: userId} },
+  						{ $group:
+  							{ _id:"$symbol",
+  							  total:{$sum: "$owned"}}}]).exec( function(err, data) {
+  if (err) {
+  resp.json({ message: 'Unable to connect to portfolios' });
+
+  } 
+  else {
+	//console.log(data);
+    var totalStocks = 0; 
+        for (let x in data){
+            totalStocks += data[x].total;
+        }
+        var y =0;
+    for (let x in data){
+        
+        data[x].total = (data[x].total/totalStocks);
+         y +=data[x].total ;
+    }
+      resp.json(data);
+     console.log(y);
+    }
+  }); 
+  
+  }
+);
+
+
+//A	
 //checks for logins
 app.route('/api/users/:email/:password')
 
