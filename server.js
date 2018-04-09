@@ -17,6 +17,20 @@ mongoose.connect('mongodb://Abdul:Comp4513@ds125469.mlab.com:25469/heroku_ghq7zd
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+   // Website you wish to allow to connect
+   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8888');
+
+    // Request methods you wish to allow
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+    // Request headers you wish to allow
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+    // Set to true if you need the website to include cookies in the requests sent
+    // to the API (e.g. in case you use sessions)
+    res.setHeader('Access-Control-Allow-Credentials', true);
+
+    // Pass to next layer of middleware
   next();
 });
 
@@ -215,6 +229,7 @@ app.route('/api/portfolio/:id')
   });
 });
 
+/*
 //G plus
 app.route('/api/portfolio/:id')
     .get(function(req, resp) {
@@ -235,7 +250,7 @@ db.prices.aggregate([
 
 ])
 
-	
+*/	
 	
 //checks for logins
 app.route('/api/users/:email/:password')
