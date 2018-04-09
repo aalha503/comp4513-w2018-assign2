@@ -264,26 +264,34 @@ app.route('/api/users/:email/:password')
 		resp.status(204);
 		resp.send({ message: 'User does not exist' });
 		}
-		else{
+		//else{
+		
 		//console.log("data is \n" + data + "\n \n");
 		//console.log("data[0].salt>>>:" + data[0].salt + "\n");
-		var theAttempt = thePassword + data[0].salt;
-	    var saltedPeppered = md5(theAttempt,'hex');
-	    //var hash = crypto.createHash('md5').update(theAttempt).digest('hex');
-	    if(saltedPeppered === data[0].password){
-	   		 var infoToReturn = { id:data[0].id,
-       		first_name:data[0].first_name,
-    		last_name:data[0].last_name};
-    		resp.json(infoToReturn);
-  			resp.status(200);
+		else if (data.length ===1){
+			var theAttempt = thePassword + data[0].salt;
+	    	var saltedPeppered = md5(theAttempt,'hex');
+	    	//var hash = crypto.createHash('md5').update(theAttempt).digest('hex');
+	    	if(saltedPeppered === data[0].password){
+	   			 var infoToReturn = { id:data[0].id,
+       			first_name:data[0].first_name,
+    			last_name:data[0].last_name};
+    			resp.json(infoToReturn);
+  				resp.status(200);
 	    	}
 	    	else {
 	    	resp.status(204);
             resp.send({ message: 'incorrect username or password' });
         	}
-		}
-		});
-	});
+        }
+        
+        else {
+        resp.status(204);
+        resp.send({ message: 'incorrect username or password' });
+        }
+	})
+	
+});
 	
 //returns company based on symbol
   app.route('/api/companies/ssc')
