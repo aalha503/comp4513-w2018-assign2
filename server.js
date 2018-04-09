@@ -83,9 +83,9 @@ var portfoliosSchema = new mongoose.Schema(
 var Portfolio = mongoose.model('Portfolio', portfoliosSchema);
 
 
+//Routes are defined here
 
-// Routes are defined here
-	//returns all companies
+//returns all companies
   app.route('/api/companies')
     .get(function(req, res) {
   	Company.find({}).sort({name:1}).exec(function(err, data) {
@@ -95,7 +95,8 @@ var Portfolio = mongoose.model('Portfolio', portfoliosSchema);
   });
   });
 
-	//returns company based on symbol
+//B
+//returns company based on symbol
   app.route('/api/company/:symbol')
     .get(function(req, resp){
      var symbol = req.params.symbol.toUpperCase();
@@ -109,8 +110,8 @@ var Portfolio = mongoose.model('Portfolio', portfoliosSchema);
        	 }
         })
 	});
-	
-	//returns the price info for each day in a specified month
+//C	
+//returns the price info for each day in a specified month
 	  app.route('/api/price/:name/:month')
     .get(function(req, resp){
      var name = req.params.name.toUpperCase();
@@ -134,7 +135,7 @@ var Portfolio = mongoose.model('Portfolio', portfoliosSchema);
        	 }
         })
 	});
-
+//D
 //returns the average close value for each month in the year
   app.route('/api/avg/price/:name')
     .get(function(req, resp){
@@ -154,7 +155,7 @@ var Portfolio = mongoose.model('Portfolio', portfoliosSchema);
        	 }
     	})
     });
-
+//E
 //returns the price information for a specific date
     app.route('/api/price/info/:name/:cDate')
     .get(function(req, resp){
@@ -179,7 +180,7 @@ var Portfolio = mongoose.model('Portfolio', portfoliosSchema);
        	 }
     	})
     });
-	
+//F	
 //returns the latest price information for the newest date
 app.route('/api/final/price/:name')
     .get(function (req,resp) {
@@ -220,7 +221,7 @@ app.route('/api/users/:email/:password')
 	.get(function(req, resp){
 	var theEmail = req.params.email;
 	var thePassword = req.params.password;
-    User.find({email: theEmail},{salt: 1, password: 1, id: 1, name:1}, function(err,data){
+    User.find({email: theEmail},{salt: 1, password: 1, id: 1, first_name:1, last_name:1}, function(err,data){
 		if(err){
 		resp.json({ message: 'User does not exist' });
 		console.log('User does not exist');
@@ -231,8 +232,18 @@ app.route('/api/users/:email/:password')
 		var theAttempt = thePassword + data[0].salt;
 	    var saltedPeppered = md5(theAttempt,'hex');
 	    //var hash = crypto.createHash('md5').update(theAttempt).digest('hex');
-	    if(saltedPepper === data[0].password)
-		resp.json(data);
+	    if(saltedPeppered === data[0].password){
+	    console.log("IM HERE DOE");
+	   		 var infoToReturn = { id:data[0].id,
+       		first_name:data[0].first_name,
+    		last_name:data[0].last_name};
+    		resp.json(infoToReturn);
+	    	}
+	    	
+	    else {
+	    	//console.log(saltedPeppered + "\n" + data[0].password );
+            resp.send({ message: 'incorrect username or password' });
+		}
 		//let saltedPeppered = thePassword + salt;
 		//console.log(saltedPeppered);
 		//console.log(data[0].password);
@@ -241,47 +252,19 @@ app.route('/api/users/:email/:password')
 		})
 	});
 	
-	  
-/*
-app.route('/api/users/:email/:password')
-    .get(function (req, resp) {
-        
-              
-                  User.find( {email: req.params.email}, { salt: 1, password: 1},
-                    function(err, data){
-                                  {
-                     if(err){
-                          resp.json({ message: 'Unable to connect to users' });
-                     }
-                     else {
+//returns company based on symbol
+  app.route('/api/companies/ssc')
+    .get(function(req, resp){
+    Company.find({},{symbol: 1, name: 1},function(err, data){
+        if(err){
+            resp.json({message: 'Unable to find companies'});
+        }
+       	 else{
+       	 resp.json(data)
+       	 }
+        })
+	});	  
 
-                    var saltedHash = crypto.createHash('md5').update(req.params.password + data[0].salt).digest('hex');
-                    
-                    console.log("Compared pass: " + data[0].password);
-                    console.log("Salted hash: " + saltedHash);
-                    queryChecker(saltedHash);
-  
-                     }
-                    }
-                    
-                    
-        });
-             
-               function queryChecker(saltedHash){
-                   User.find( {password: saltedHash}, { id: 1, first_name: 1, last_name: 1}, 
-                        function(err, data)
-                        {
-                           if(err){
-                                 resp.json({ message: 'Wrong password' });
-                            }
-                            else {
-                                resp.json(data);
-                                console.log("data: " + data);
-                            }
-                            });
-               }
-    });
-*/
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
