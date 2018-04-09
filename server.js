@@ -261,7 +261,7 @@ app.route('/api/users/:email/:password')
 	var thePassword = req.params.password;
     User.find({email: theEmail},{salt: 1, password: 1, id: 1, first_name:1, last_name:1}, function(err,data){
 		if(err){
-		resp.status(200);
+		resp.status(204);
 		resp.json({ message: 'User does not exist' });
 		}
 		else{
@@ -275,7 +275,7 @@ app.route('/api/users/:email/:password')
        		first_name:data[0].first_name,
     		last_name:data[0].last_name};
     		resp.json(infoToReturn);
-  			
+  			resp.status(200);
 	    	}
 	    	
 	    else {
