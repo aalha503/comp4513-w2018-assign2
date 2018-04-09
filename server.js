@@ -17,6 +17,7 @@ mongoose.connect('mongodb://Abdul:Comp4513@ds125469.mlab.com:25469/heroku_ghq7zd
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+   
    // Website you wish to allow to connect
    res.header('Access-Control-Allow-Origin', process.env.PORT);
 
@@ -34,7 +35,7 @@ app.use(function(req, res, next) {
   next();
 });
 
-app.use(cors())
+app.use(cors());
 
 //module.exports = function(app) {
   
@@ -254,13 +255,14 @@ db.prices.aggregate([
 	
 //checks for logins
 app.route('/api/users/:email/:password')
+
 	.post(function(req, resp){
 	var theEmail = req.params.email;
 	var thePassword = req.params.password;
     User.find({email: theEmail},{salt: 1, password: 1, id: 1, first_name:1, last_name:1}, function(err,data){
 		if(err){
+		resp.status(200);
 		resp.json({ message: 'User does not exist' });
-		console.log('User does not exist');
 		}
 		else{
 		//console.log("data is \n" + data + "\n \n");
@@ -273,7 +275,7 @@ app.route('/api/users/:email/:password')
        		first_name:data[0].first_name,
     		last_name:data[0].last_name};
     		resp.json(infoToReturn);
-  			resp.status(200);
+  			
 	    	}
 	    	
 	    else {
