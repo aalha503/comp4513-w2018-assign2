@@ -214,11 +214,32 @@ app.route('/api/portfolio/:id')
     }
   });
 });
+
+//G plus
+app.route('/api/portfolio/:id')
+    .get(function(req, resp) {
+    var id = req.params.id
+db.prices.aggregate([
+  { $lookup:
+     {
+       from: "db.portfolios",
+       localField: "name",
+       foreignField: "symbol",
+       as: "theJoinedPrice"}
+    
+  },
+  { $match: {"name": "AMZN"}
+     },
+  { $sort: {"date": -1}},
+  {$limit: 1}
+
+])
+
 	
 	
 //checks for logins
 app.route('/api/users/:email/:password')
-	.get(function(req, resp){
+	.post(function(req, resp){
 	var theEmail = req.params.email;
 	var thePassword = req.params.password;
     User.find({email: theEmail},{salt: 1, password: 1, id: 1, first_name:1, last_name:1}, function(err,data){
@@ -233,15 +254,16 @@ app.route('/api/users/:email/:password')
 	    var saltedPeppered = md5(theAttempt,'hex');
 	    //var hash = crypto.createHash('md5').update(theAttempt).digest('hex');
 	    if(saltedPeppered === data[0].password){
-	    console.log("IM HERE DOE");
 	   		 var infoToReturn = { id:data[0].id,
        		first_name:data[0].first_name,
     		last_name:data[0].last_name};
     		resp.json(infoToReturn);
+  			resp.status(200);
 	    	}
 	    	
 	    else {
 	    	//console.log(saltedPeppered + "\n" + data[0].password );
+	    	resp.status(204);
             resp.send({ message: 'incorrect username or password' });
 		}
 		//let saltedPeppered = thePassword + salt;
