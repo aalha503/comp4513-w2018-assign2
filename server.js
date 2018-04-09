@@ -199,7 +199,7 @@ app.route('/api/final/price/:name')
     }); 
   });
   
-  
+//G  
 //returns portfolio info for a specific user
 app.route('/api/portfolio/:id')
     .get(function(req, resp) {
