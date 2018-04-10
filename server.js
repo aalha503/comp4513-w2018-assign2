@@ -296,6 +296,20 @@ app.get('/api/portfolio/percentage/:userId', function (req,resp)
   }
 );
 
+//
+app.route('/api/getUserIDName/:id')
+    .get(function(req, resp) {
+    var id = req.params.id
+  	User.find({id : id}, {first_name: 1, last_name: 1, email: 1, id: 1}, function(err, data) {
+    if (err){
+    resp.json({ message: 'Unable to find user' });
+    }
+    else{
+    resp.json(data);
+    }
+  });
+});
+
 
 //A	
 //checks for logins
@@ -338,7 +352,8 @@ app.route('/api/users/:email/:password')
 	
 });
 	
-//returns company based on symbol
+//I
+//returns a list of companies stock symbol and company name
   app.route('/api/companies/ssc')
     .get(function(req, resp){
     Company.find({},{symbol: 1, name: 1},function(err, data){
